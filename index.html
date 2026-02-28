@@ -352,7 +352,7 @@
 
     <!-- ── Step 1: URL Input ── -->
     <div class="card">
-      <p class="card-title">Step 1 — Paste your OoT Bingo URL</p>
+      <p class="card-title">Paste your OoT Bingo URL</p>
       <div class="input-row">
         <input
           type="url"
@@ -368,7 +368,7 @@
 
     <!-- ── Step 2: Board Preview + JSON ── -->
     <div class="card hidden" id="output-section">
-      <p class="card-title">Step 2 — Board Preview &amp; JSON</p>
+      <p class="card-title">Board Preview &amp; JSON</p>
 
       <div class="meta-strip" id="meta-strip"></div>
 
@@ -389,7 +389,7 @@
 
     <!-- ── Step 3: Create BingoSync Room ── -->
     <div class="card hidden" id="instructions-section">
-      <p class="card-title">Step 3 — Create your BingoSync Room</p>
+      <p class="card-title">Create your BingoSync Room</p>
 
       <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1rem;">
         BingoSync doesn't offer a public API for room creation, so you'll need to set it up manually —
@@ -399,12 +399,6 @@
       <button class="btn btn-launch" id="launch-btn" onclick="openBingoSync()">
         Copy JSON &amp; Open BingoSync
       </button>
-
-      <div id="launch-note" class="callout hidden" style="margin-top:0.75rem;">
-        <strong>JSON copied!</strong> On BingoSync: click <strong>Make a room</strong>, choose
-        <code>Custom (Advanced)</code> as the game, paste into <strong>Custom Goals JSON</strong>,
-        fill in room name &amp; passphrase, then hit <strong>Create Room</strong>.
-      </div>
     </div>
 
   </main>
@@ -501,7 +495,6 @@ function execScript(scriptText, returnExpr) {
 async function generateBoard(version, seed, mode) {
   const versionPath = await getVersionPath(version);
 
-  setStatus('<span class="spinner"></span>Loading goal list…', 'loading');
   const goalListText = await fetchText(`${BASE}/${versionPath}/goal-list.js`);
   const goalList = execScript(goalListText, 'bingoList');
   if (!goalList) throw new Error('Goal list failed to load (bingoList is undefined).');
@@ -516,7 +509,6 @@ async function generateBoard(version, seed, mode) {
     }
   }
 
-  setStatus('<span class="spinner"></span>Loading generator…', 'loading');
   const generatorText = await fetchText(`${BASE}/${versionPath}/generator.js`);
 
   // The generator exposes either BingoLibrary.ootBingoGenerator (v9+)
@@ -534,7 +526,6 @@ async function generateBoard(version, seed, mode) {
     throw new Error('Could not find the generator function. This version may be unsupported.');
   }
 
-  setStatus('<span class="spinner"></span>Generating board…', 'loading');
   const board = generatorFn(goalList, { seed, mode, lang: 'name' });
 
   // The generator returns a 1-indexed array (index 0 is unused metadata).
@@ -584,6 +575,7 @@ async function convert() {
   }
 
   btn.disabled = true;
+  btn.textContent = 'Converting…';
   try {
     const goals = await generateBoard(params.version, params.seed, params.mode);
 
@@ -606,8 +598,7 @@ async function convert() {
     // Show sections
     show('output-section');
     show('instructions-section');
-
-    setStatus(`✅ Board generated — ${goals.length} goals for seed ${params.seed} (${params.mode})`, 'success');
+    setStatus('', '');
 
     // Scroll to results
     document.getElementById('output-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -623,6 +614,7 @@ async function convert() {
     setStatus('❌ ' + err.message, 'error');
   } finally {
     btn.disabled = false;
+    btn.textContent = 'Convert';
   }
 }
 
@@ -667,17 +659,13 @@ async function openBingoSync() {
   // Open BingoSync in a new tab
   window.open('https://bingosync.com', '_blank', 'noopener,noreferrer');
 
-  // Show confirmation note
-  const note = document.getElementById('launch-note');
-  note.classList.remove('hidden');
-
   // Update button temporarily
   const btn = document.getElementById('launch-btn');
   const orig = btn.textContent;
   btn.textContent = '✓ Opened! Paste the JSON on BingoSync';
   btn.classList.add('outline');
   setTimeout(() => {
-    btn.innerHTML = 'Copy JSON &amp; Open BingoSync →';
+    btn.innerHTML = 'Copy JSON &amp; Open BingoSync';
     btn.classList.remove('outline');
   }, 4000);
 }
