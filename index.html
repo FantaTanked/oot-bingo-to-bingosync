@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OoT Bingo → BingoSync</title>
+  <title>OoT Bingo → Bingosync</title>
   <style>
     :root {
       --bg:           #0d1117;
@@ -344,8 +344,8 @@
 <div class="container">
 
   <header>
-    <h1>OoT Bingo → BingoSync</h1>
-    <p>Generate JSON for BingoSync Custom Board</p>
+    <h1>OoT Bingo → Bingosync</h1>
+    <p>Generate JSON for Bingosync Custom Board</p>
   </header>
 
   <main>
@@ -377,9 +377,9 @@
       <hr>
 
       <div class="json-label">
-        <span>BingoSync Custom Goals JSON <span id="goal-count" style="color:var(--text-muted)"></span></span>
+        <span>Bingosync Custom Goals JSON <span id="goal-count" style="color:var(--text-muted)"></span></span>
       </div>
-      <textarea id="json-output" readonly spellcheck="false" aria-label="BingoSync custom goals JSON"></textarea>
+      <textarea id="json-output" readonly spellcheck="false" aria-label="Bingosync custom goals JSON"></textarea>
 
       <div class="actions">
         <button class="btn" id="copy-btn" onclick="copyJson()">Copy JSON</button>
@@ -389,15 +389,10 @@
 
     <!-- ── Step 3: Create BingoSync Room ── -->
     <div class="card hidden" id="instructions-section">
-      <p class="card-title">Create your BingoSync Room</p>
-
-      <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1rem;">
-        BingoSync doesn't offer a public API for room creation, so you'll need to set it up manually —
-        but the button below does the heavy lifting for you.
-      </p>
+      <p class="card-title">Create your Bingosync Room</p>
 
       <button class="btn btn-launch" id="launch-btn" onclick="openBingoSync()">
-        Copy JSON &amp; Open BingoSync
+        Copy JSON &amp; Open Bingosync
       </button>
     </div>
 
@@ -452,7 +447,7 @@ function parseOoTUrl(raw) {
   if (!trimmed) throw new Error('Please enter an OoT Bingo URL.');
 
   let url;
-  try { url = new URL(trimmed); }
+  try { url = new URL(trimmed.includes('://') ? trimmed : 'https://' + trimmed); }
   catch { throw new Error('That doesn\'t look like a valid URL.'); }
 
   if (!url.hostname.includes('ootbingo.github.io')) {
@@ -662,10 +657,10 @@ async function openBingoSync() {
   // Update button temporarily
   const btn = document.getElementById('launch-btn');
   const orig = btn.textContent;
-  btn.textContent = '✓ Opened! Paste the JSON on BingoSync';
+  btn.textContent = '✓ Opened! Paste the JSON on Bingosync';
   btn.classList.add('outline');
   setTimeout(() => {
-    btn.innerHTML = 'Copy JSON &amp; Open BingoSync';
+    btn.innerHTML = 'Copy JSON &amp; Open Bingosync';
     btn.classList.remove('outline');
   }, 4000);
 }
