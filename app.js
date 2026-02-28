@@ -156,7 +156,6 @@ async function convert() {
   const btn = document.getElementById('convert-btn');
 
   hide('output-section');
-  hide('instructions-section');
 
   let params;
   try {
@@ -189,7 +188,6 @@ async function convert() {
 
     // Show sections
     show('output-section');
-    show('instructions-section');
     setStatus('', '');
 
     // Scroll to results
